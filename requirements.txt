@@ -1,0 +1,2 @@
+# 使用 AstrBot 内置库即可（aiohttp, botpy）
+# 无额外外部依赖

@@ -1,0 +1,7 @@
+name: astrbot_plugin_astrbot_llbot_server
+display_name: MC与BOT服务监控
+desc: MC 与 BOT 服务器状态监控——定时监控 astrbot/QQ 存活 + Minecraft 游戏服务器状态，支持自然语言主动查询，离线/恢复时通过 QQ 群通知。
+author: YCHDDZZ
+version: 1.0.0
+repo: https://github.com/YCHDDZZ/astrbot_plugin_astrbot_llbot_server
+astrbot_version: ">=4.16"

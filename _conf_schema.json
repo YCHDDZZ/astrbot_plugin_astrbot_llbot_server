@@ -1,0 +1,167 @@
+{
+  "check_interval": {
+    "description": "健康检查间隔（秒）",
+    "type": "int",
+    "default": 60,
+    "hint": "每隔多少秒检查一次所有服务器"
+  },
+  "http_timeout": {
+    "description": "HTTP 请求超时时间（秒）",
+    "type": "int",
+    "default": 10,
+    "hint": "健康检查时 HTTP 请求的超时秒数"
+  },
+  "recovery_confirm_count": {
+    "description": "服务恢复确认次数——连续几次检查都正常才视为恢复，防止 QQ 重启后未登录就误报",
+    "type": "int",
+    "default": 1,
+    "hint": "设为 1 立即恢复；设为 2+ 需连续 N 次检查正常才发恢复通知，适合避免 QQ 重启后未登录误报"
+  },
+  "notification_cooldown": {
+    "description": "通知冷却时间（秒），防止网络抖动频繁通知",
+    "type": "int",
+    "default": 300,
+    "hint": "同一服务器同一服务状态变更后，N 秒内不再重复通知"
+  },
+  "enable_notification": {
+    "description": "启用通知推送",
+    "type": "bool",
+    "default": true
+  },
+  "notification_groups": {
+    "description": "通知群聊 ID（每行一个）",
+    "type": "text",
+    "default": "",
+    "hint": "QQ 官方 bot 的 group_openid（类似 xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx 格式，不是 QQ 群号）"
+  },
+  "enable_at_users": {
+    "description": "启用 @ 指定用户",
+    "type": "bool",
+    "default": false
+  },
+  "at_users": {
+    "description": "需要 @ 的用户（每行一个 QQ 号）",
+    "type": "text",
+    "default": "",
+    "hint": "在通知中 @ 的用户 ID"
+  },
+  "active_query_enabled": {
+    "description": "启用主动查询（用小模型判断用户自然语言是否在查服务器状态）",
+    "type": "bool",
+    "default": false,
+    "hint": "开启后，每条用户消息先过小模型做意图识别。若命中则直接返回状态，绕过主 LLM"
+  },
+  "active_query_provider": {
+    "description": "意图识别模型（从已配置的模型提供商中选择，小模型即可）",
+    "type": "string",
+    "_special": "select_provider",
+    "default": "",
+    "hint": "仅做意图四分类（BOT_QUERY/MC_QUERY/ASK_CLARIFY/OTHER），0.5B~3B 模型足够"
+  },
+  "active_query_cooldown": {
+    "description": "主动查询冷却时间（秒），避免每条消息都调模型",
+    "type": "int",
+    "default": 30,
+    "hint": "N 秒内只做一次意图识别"
+  },
+  "active_query_prompt": {
+    "description": "意图识别提示词（{user_message} 会被替换为用户消息）",
+    "type": "text",
+    "default": "判断用户消息意图，只返回一个标签：\nBOT_QUERY — 明确提到 BOT/机器人/astrbot/QQ机器人 查询状态\nMC_QUERY  — 明确提到 MC/Minecraft/我的世界/游戏服务器 查询状态\nASK_CLARIFY — 提到服务器/服务状态但未指明 BOT 或 MC\nOTHER — 与以上无关\n\n只输出标签，不要其他文字。\n\n消息: {user_message}",
+    "hint": "{user_message} 替换为用户消息。模型输出 BOT_QUERY / MC_QUERY / ASK_CLARIFY / OTHER"
+  },
+  "servers": {
+    "description": "监听的服务器列表",
+    "type": "template_list",
+    "templates": {
+      "server": {
+        "name": "服务器",
+        "hint": "添加需要监控的 astrbot+QQ 服务器",
+        "items": {
+          "name": {
+            "description": "自定义名称（如\"千早爱音\"）",
+            "type": "string",
+            "default": ""
+          },
+          "astrbot_url": {
+            "description": "astrbot 地址（含协议和端口）",
+            "type": "string",
+            "default": "",
+            "hint": "例如 http://your-server-ip:port/"
+          },
+          "astrbot_api_key": {
+            "description": "astrbot API Key",
+            "type": "string",
+            "default": ""
+          },
+          "enable_astrbot": {
+            "description": "启用 astrbot 检查",
+            "type": "bool",
+            "default": true
+          },
+          "llbot_url": {
+            "description": "QQ 地址（host:port）",
+            "type": "string",
+            "default": "",
+            "hint": "例如 your-domain.com:port"
+          },
+          "llbot_api_token": {
+            "description": "QQ API Token",
+            "type": "string",
+            "default": ""
+          },
+          "enable_llbot": {
+            "description": "启用 QQ 检查",
+            "type": "bool",
+            "default": true
+          },
+          "llbot_health_path": {
+            "description": "QQ 健康检查端点",
+            "type": "string",
+            "default": "/get_login_info",
+            "hint": "OneBot11: /get_login_info 或 /get_status ; Milky: /api/get_login_info"
+          }
+        }
+      }
+    }
+  },
+  "mc_servers": {
+    "description": "MC 游戏服务器列表",
+    "type": "template_list",
+    "templates": {
+      "mc_server": {
+        "name": "MC 服务器",
+        "hint": "添加需要监控和查询的 Minecraft 服务器",
+        "items": {
+          "name": {
+            "description": "服务器名称",
+            "type": "string",
+            "default": ""
+          },
+          "mc_ip": {
+            "description": "服务器 IP/域名",
+            "type": "string",
+            "default": "",
+            "hint": "例如 xm.rainplay.cn"
+          },
+          "mc_port": {
+            "description": "服务器端口",
+            "type": "int",
+            "default": 25565
+          },
+          "mc_server_type": {
+            "description": "服务器类型",
+            "type": "string",
+            "default": "java",
+            "hint": "java 或 bedrock"
+          },
+          "enable_mc": {
+            "description": "启用 MC 检查",
+            "type": "bool",
+            "default": true
+          }
+        }
+      }
+    }
+  }
+}
